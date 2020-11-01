@@ -97,17 +97,29 @@ static inline void init() {
 	// WDTCR |= 1 << WDE;  // watchdog enable
 	// WDTCR |= WDP2; // ~250 ms timeout
 
-	// Setup timer 0
+	// Setup timer 0 TODO
 	TCCR0A |= 1 << WGM01; // CTC mode
 	TCCR0B |= 1 << CS01; // no prescaler
 	TIMSK0 |= 1 << OCIE0A; // enable compare match A
 	OCR0A = 99;
 
+	// Setup 16-bit timer 1 for servo PWM generation
+	// Servos are not connected to physical PWM output → we must generate PWM in firmware
+	TCCR1B |= 1 << WGM12; /// CTC mode
+	TCCR1B |= 1 << CS11; // prescaler 8×
+	OCR1A = 40000; // 20 ms ~ 50 Hz (35000 = 2.5 ms = servo middle)
+
 	sei(); // enable interrupts globally
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 ISR(TIMER0_COMPA_vect) {
 	// Timer 0 @ 10 kHz (period 100 us)
+}
+
+ISR(TIMER1_COMPA_vect) {
+	// Timer 1 for servo control
 }
 
 ///////////////////////////////////////////////////////////////////////////////

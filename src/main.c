@@ -7,6 +7,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/wdt.h>
+#include <avr/eeprom.h>
 
 #include "io.h"
 #include "pwm_servo_gen.h"
@@ -17,14 +18,15 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define EEPROM_POS_START 0
+#define EEPROM_ANGLE_START 32
+
 Turnout turnouts[TURNOUTS_COUNT] = {
 	{ // servo 1 [0]
 		.pin_pot = IO_PINC2,
 		.pin_led = IO_PINB1,
 		.pin_servo = IO_PIND6,
 		.pin_button = IO_PIND1,
-		.position = tpPlus, // TODO
-		.angle = -1000, // TODO
 	},
 };
 
@@ -77,6 +79,7 @@ static inline void init() {
 	TCCR0B |= (1 << CS01) | (1 << CS00); // 64× prescaler
 	OCR0A = 127;
 
+	eeprom_load_all_pos();
 	pwm_servo_init();
 	sq_init(&command_queue);
 	adc_init();
@@ -116,9 +119,35 @@ ISR(TIMER0_COMPA_vect) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void eeprom_load_all_pos() {
+	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++) {
+		turnouts[i].position = (TurnoutPos)eeprom_read_byte((uint8_t*)(EEPROM_POS_START+i));
+
+		if (turnouts[i].position == tpMovingToPlus)
+			turnouts[i].position = tpPlus;
+		else if (turnouts[i].position == tpMovingToMinus)
+			turnouts[i].position = tpMinus;
+		else if (turnouts[i].position > 3)
+			turnouts[i].position = tpPlus;
+
+		turnouts[i].angle = eeprom_read_word((uint16_t*)(EEPROM_ANGLE_START+i));
+		if ((uint16_t)turnouts[i].angle == 0xFFFF)
+			turnouts[i].angle = 0;
+		else if (turnouts[i].angle < PWM_ANGLE_MIN)
+			turnouts[i].angle = PWM_ANGLE_MIN;
+		else if (turnouts[i].angle > PWM_ANGLE_MAX)
+			turnouts[i].angle = PWM_ANGLE_MAX;
+	}
 }
 
 void eeprom_store_pos(Turnout* turnout) {
+	TurnoutPos pos = turnout->position;
+	if (pos == tpMovingToPlus)
+		pos = tpPlus;
+	else if (pos == tpMovingToMinus)
+		pos = tpMinus;
+
+	eeprom_write_byte((uint8_t*)(EEPROM_POS_START + turnout->index), pos);
+	eeprom_write_word((uint16_t*)(EEPROM_ANGLE_START + turnout->index), turnout->angle);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -141,6 +170,10 @@ void queue_poll() {
 		switch_turnout(turnout, tpMinus);
 	else if (turnout->position == tpMinus)
 		switch_turnout(turnout, tpPlus);
+}
+
+void switch_done(Turnout* turnout) {
+	eeprom_store_pos(turnout);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

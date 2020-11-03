@@ -27,8 +27,10 @@ void switch_turnout(Turnout* turnout, TurnoutPos pos) {
 
 void switch_stop() {
 	if (_switching != NULL) {
+		Turnout* tmp = _switching;
 		_switching = NULL;
 		pwm_servo_stop();
+		switch_done(tmp);
 	}
 }
 

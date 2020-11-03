@@ -18,13 +18,12 @@ typedef struct {
 	uint8_t pin_button;
 
 	uint8_t index;
-	TurnoutPos position; // TODO: reset on init
-	int8_t debounce_val; // TODO: reset on init
+	TurnoutPos position;
+	int8_t debounce_val;
 	int16_t angle;
 	uint16_t width;
 	uint8_t btn_debounce_val;
 	bool btn_pressed;
-	// TODO: data for turning-off signal to servo after some time
 } Turnout;
 
 #define TURNOUTS_COUNT 1

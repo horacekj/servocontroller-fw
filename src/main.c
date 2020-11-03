@@ -25,9 +25,6 @@ Turnout turnouts[TURNOUTS_COUNT] = {
 		.pin_button = IO_PIND1,
 		.position = tpPlus, // TODO
 		.angle = -1000, // TODO
-		.width = 1000, // TODO
-		.btn_debounce_val = 0, // TODO general reset
-		.btn_pressed = false, // TODO general reset
 	},
 };
 
@@ -44,13 +41,11 @@ void eeprom_store_pos(Turnout*);
 void leds_update_20ms(Turnout*);
 void queue_poll();
 
-// TODO: servo angle update on potentiometer value changed (and possibly change servo position)
-
 ///////////////////////////////////////////////////////////////////////////////
 
 int main() {
 	volatile uint16_t adc_counter = 0;
-	#define ADC_TIMEOUT 100
+	#define ADC_TIMEOUT 100 // cca in ms
 	init();
 
 	adc_read_all();
@@ -90,8 +85,11 @@ static inline void init() {
 	sq_init(&command_queue);
 	adc_init();
 
-	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++)
+	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++) {
 		turnouts[i].index = i;
+		turnouts[i].btn_debounce_val = 0;
+		turnouts[i].btn_pressed = false;
+	}
 
 	sei(); // enable interrupts globally
 }

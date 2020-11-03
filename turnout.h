@@ -1,6 +1,8 @@
 #ifndef _TURNOUT_H_
 #define _TURNOUT_H_
 
+#include <stdint.h>
+
 typedef enum {
 	tpPlus = 0,
 	tpMinus = 1,
@@ -16,7 +18,8 @@ typedef struct {
 
 	TurnoutPos position; // TODO: reset on init
 	int8_t debounce_val; // TODO: reset on init
-	uint8_t angle; // TODO: add proper data type
+	int16_t angle;
+	uint16_t width;
 	// TODO: data for turning-off signal to servo after some time
 } Turnout;
 

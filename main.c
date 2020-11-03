@@ -10,6 +10,7 @@
 #include "io.h"
 #include "pwm_servo_gen.h"
 #include "turnout.h"
+#include "switch.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,8 +19,10 @@ Turnout turnouts[TURNOUTS_COUNT] = {
 	{ // servo 1 [0]
 		.pin_pot = IO_PINC0,
 		.pin_led = IO_PINB4,
-		.pin_servo = IO_PINB0,
+		.pin_servo = IO_PIND6,
 		.pin_button = IO_PIND4,
+		.angle = 0, // TODO
+		.width = 1000, // TODO
 	},
 };
 
@@ -45,11 +48,17 @@ void move_update(Turnout*);
 
 int main() {
 	init();
-	pwm_servo_gen(IO_PIND5, 0);
 	pwm_servo_gen(IO_PIND6, 0);
+	_delay_ms(500);
 
 	while (true) {
 		// wdt_reset();
+		switch_turnout(&turnouts[0], tpPlus);
+		while (is_switching());
+		_delay_ms(1000);
+		switch_turnout(&turnouts[0], tpMinus);
+		while (is_switching());
+		_delay_ms(1000);
 	}
 }
 
@@ -65,9 +74,9 @@ static inline void init() {
 
 	// Setup timer 0 TODO
 	TCCR0A |= 1 << WGM01; // CTC mode
-	TCCR0B |= 1 << CS01; // no prescaler
+	TCCR0B |= (1 << CS01) | (1 << CS00); // 64× prescaler
 	TIMSK0 |= 1 << OCIE0A; // enable compare match A
-	OCR0A = 99;
+	OCR0A = 127;
 
 	pwm_servo_init();
 
@@ -77,7 +86,13 @@ static inline void init() {
 ///////////////////////////////////////////////////////////////////////////////
 
 ISR(TIMER0_COMPA_vect) {
-	// Timer 0 @ 10 kHz (period 100 us)
+	// Timer 0 @ 1 kHz (period 1 ms)
+	static volatile uint8_t counter_20ms = 0;
+	counter_20ms++;
+	if (counter_20ms >= 20) {
+		switch_update();
+		counter_20ms = 0;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

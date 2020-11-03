@@ -87,7 +87,7 @@ OBJDIR = obj
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = main.c io.c pwm_servo_gen.c
+SRC = main.c io.c pwm_servo_gen.c switch.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 # CPPSRC =

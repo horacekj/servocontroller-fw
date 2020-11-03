@@ -30,3 +30,25 @@ bool get_input(uint8_t pin) {
 
 	return false;
 }
+
+void set_dir_in(uint8_t pin) {
+	set_output(pin, true); // disable pull-up
+
+	if (pin >= IO_PINB0 && pin <= IO_PINB7) {
+		DDRB &= ~(1 << (pin-IO_PINB0));
+	} else if (pin >= IO_PINC0 && pin <= IO_PINC7) {
+		DDRC &= ~(1 << (pin-IO_PINC0));
+	} else if (pin >= IO_PIND0 && pin <= IO_PIND7) {
+		DDRD &= ~(1 << (pin-IO_PIND0));
+	}
+}
+
+void set_dir_out(uint8_t pin) {
+	if (pin >= IO_PINB0 && pin <= IO_PINB7) {
+		DDRB |= (1 << (pin-IO_PINB0));
+	} else if (pin >= IO_PINC0 && pin <= IO_PINC7) {
+		DDRC |= (1 << (pin-IO_PINC0));
+	} else if (pin >= IO_PIND0 && pin <= IO_PIND7) {
+		DDRD |= (1 << (pin-IO_PIND0));
+	}
+}

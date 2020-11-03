@@ -1,6 +1,7 @@
 /* Main source file of Servocontroller ATmega CPU.
  */
 
+#include <stdint.h>
 #include <stdbool.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -18,7 +19,7 @@
 Turnout turnouts[TURNOUTS_COUNT] = {
 	{ // servo 1 [0]
 		.pin_pot = IO_PINC0,
-		.pin_led = IO_PINB4,
+		.pin_led = IO_PINB1,
 		.pin_servo = IO_PIND6,
 		.pin_button = IO_PIND4,
 		.angle = 0, // TODO
@@ -39,8 +40,7 @@ void eeprom_store_pos(Turnout*);
 void debounce_update(Turnout*);
 void on_btn_pressed(Turnout*);
 
-void leds_update(Turnout*);
-void move_update(Turnout*);
+void leds_update_20ms(Turnout*);
 
 // TODO: servo angle update on potentiometer value changed (and possibly change servo position)
 
@@ -90,8 +90,11 @@ ISR(TIMER0_COMPA_vect) {
 	static volatile uint8_t counter_20ms = 0;
 	counter_20ms++;
 	if (counter_20ms >= 20) {
-		switch_update();
 		counter_20ms = 0;
+		switch_update();
+
+		for (uint8_t i = 0; i < TURNOUTS_COUNT; i++)
+			leds_update_20ms(&turnouts[i]);
 	}
 }
 
@@ -115,10 +118,28 @@ void on_btn_pressed(Turnout* turnout) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void leds_update(Turnout* turnout) {
-}
+void leds_update_20ms(Turnout* turnout) {
+	static volatile uint8_t blink = 0;
+	#define BLINK_TIMEOUT 15
 
-void move_update(Turnout* turnout) {
+	if (turnout->position == tpPlus) {
+		set_dir_out(turnout->pin_led);
+		set_output(turnout->pin_led, true);
+		blink = 0;
+	} else if (turnout->position == tpMinus) {
+		set_dir_out(turnout->pin_led);
+		set_output(turnout->pin_led, false);
+		blink = 0;
+	} else {
+		blink++;
+		if (blink < BLINK_TIMEOUT) {
+			set_dir_out(turnout->pin_led);
+			set_output(turnout->pin_led, (turnout->position == tpMovingToPlus));
+		} else if (blink < BLINK_TIMEOUT*2) {
+			set_dir_in(turnout->pin_led);
+		} else
+			blink = 0;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,8 @@
 
 void set_output(uint8_t pin, bool state);
 bool get_input(uint8_t pin);
+void set_dir_in(uint8_t pin);
+void set_dir_out(uint8_t pin);
 
 
 #endif

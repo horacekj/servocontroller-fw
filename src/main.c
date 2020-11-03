@@ -48,9 +48,6 @@ int main() {
 	#define ADC_TIMEOUT 100 // cca in ms
 	init();
 
-	adc_read_all();
-	while (adc_reading());
-
 	while (true) {
 		queue_poll();
 		_delay_ms(1);
@@ -75,10 +72,9 @@ static inline void init() {
 
 	PORTD |= (1 << PD1) | (1 << PD2) | (1 << PD3) | (1 << PD4);
 
-	// Setup timer 0 TODO
+	// Setup timer 0
 	TCCR0A |= 1 << WGM01; // CTC mode
 	TCCR0B |= (1 << CS01) | (1 << CS00); // 64× prescaler
-	TIMSK0 |= 1 << OCIE0A; // enable compare match A
 	OCR0A = 127;
 
 	pwm_servo_init();
@@ -92,6 +88,11 @@ static inline void init() {
 	}
 
 	sei(); // enable interrupts globally
+
+	adc_read_all();
+	while (adc_reading());
+
+	TIMSK0 |= 1 << OCIE0A; // timer 0 enable compare match A
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -41,12 +41,12 @@
 
 
 # MCU name
-MCU = atmega328
+MCU = atmega328p
 
 
 # Processor fuses. TODO
 #     Define fuses for processor, flash by calling 'make fuses'
-FUSES = -U lfuse:w:0xD2:m -U hfuse:w:0xDD:m -U efuse:w:0xFF:m -U lock:w:0xFF:m
+FUSES = -U lfuse:w:0xFE:m -U hfuse:w:0xD9:m -U efuse:w:0xFD:m -U lock:w:0xFF:m
 # change hfuse to 0x5D to disable reset pin
 # 8 MHz internal oscilator
 
@@ -87,7 +87,7 @@ OBJDIR = obj
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = main.c io.c
+SRC = main.c io.c pwm_servo_gen.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 # CPPSRC =

@@ -27,4 +27,6 @@ typedef struct {
 	// TODO: data for turning-off signal to servo after some time
 } Turnout;
 
+#define TURNOUTS_COUNT 1
+
 #endif

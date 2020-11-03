@@ -17,10 +17,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define TURNOUTS_COUNT 1
 Turnout turnouts[TURNOUTS_COUNT] = {
 	{ // servo 1 [0]
-		.pin_pot = IO_PINC0,
+		.pin_pot = IO_PINC2,
 		.pin_led = IO_PINB1,
 		.pin_servo = IO_PIND6,
 		.pin_button = IO_PIND1,
@@ -50,10 +49,23 @@ void queue_poll();
 ///////////////////////////////////////////////////////////////////////////////
 
 int main() {
+	volatile uint16_t adc_counter = 0;
+	#define ADC_TIMEOUT 100
 	init();
+
+	adc_read_all();
+	while (adc_reading());
 
 	while (true) {
 		queue_poll();
+		_delay_ms(1);
+
+		adc_counter++;
+		if (adc_counter >= ADC_TIMEOUT) {
+			adc_read_all();
+			adc_counter = 0;
+		}
+
 		// wdt_reset();
 	}
 }
@@ -76,6 +88,7 @@ static inline void init() {
 
 	pwm_servo_init();
 	sq_init(&command_queue);
+	adc_init();
 
 	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++)
 		turnouts[i].index = i;

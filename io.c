@@ -26,13 +26,13 @@ bool get_input(uint8_t pin) {
 	if (pin >= IO_PINC0 && pin <= IO_PINC7)
 		return (PINC >> (pin-IO_PINC0)) & 1;
 	if (pin >= IO_PIND0 && pin <= IO_PIND7)
-		return (PINC >> (pin-IO_PIND0)) & 1;
+		return (PIND >> (pin-IO_PIND0)) & 1;
 
 	return false;
 }
 
 void set_dir_in(uint8_t pin) {
-	set_output(pin, true); // disable pull-up
+	set_output(pin, false); // disable pull-up
 
 	if (pin >= IO_PINB0 && pin <= IO_PINB7) {
 		DDRB &= ~(1 << (pin-IO_PINB0));

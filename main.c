@@ -12,6 +12,7 @@
 #include "pwm_servo_gen.h"
 #include "turnout.h"
 #include "switch.h"
+#include "inputs.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -21,13 +22,14 @@ Turnout turnouts[TURNOUTS_COUNT] = {
 		.pin_pot = IO_PINC0,
 		.pin_led = IO_PINB1,
 		.pin_servo = IO_PIND6,
-		.pin_button = IO_PIND4,
-		.angle = 0, // TODO
+		.pin_button = IO_PIND1,
+		.position = tpPlus, // TODO
+		.angle = -1000, // TODO
 		.width = 1000, // TODO
+		.btn_debounce_val = 0, // TODO general reset
+		.btn_pressed = false, // TODO general reset
 	},
 };
-
-#define DEBOUNCE_READS 20 // also time in ms
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -37,9 +39,6 @@ static inline void init();
 void eeprom_load_all_pos();
 void eeprom_store_pos(Turnout*);
 
-void debounce_update(Turnout*);
-void on_btn_pressed(Turnout*);
-
 void leds_update_20ms(Turnout*);
 
 // TODO: servo angle update on potentiometer value changed (and possibly change servo position)
@@ -48,17 +47,9 @@ void leds_update_20ms(Turnout*);
 
 int main() {
 	init();
-	pwm_servo_gen(IO_PIND6, 0);
-	_delay_ms(500);
 
 	while (true) {
 		// wdt_reset();
-		switch_turnout(&turnouts[0], tpPlus);
-		while (is_switching());
-		_delay_ms(1000);
-		switch_turnout(&turnouts[0], tpMinus);
-		while (is_switching());
-		_delay_ms(1000);
 	}
 }
 
@@ -96,6 +87,9 @@ ISR(TIMER0_COMPA_vect) {
 		for (uint8_t i = 0; i < TURNOUTS_COUNT; i++)
 			leds_update_20ms(&turnouts[i]);
 	}
+
+	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++)
+		button_update_1ms(&turnouts[i]);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,12 +102,11 @@ void eeprom_store_pos(Turnout* turnout) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void debounce_update(Turnout* turnout) {
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-void on_btn_pressed(Turnout* turnout) {
+void btn_pressed(Turnout* turnout) {
+	if (turnout->position == tpPlus)
+		switch_turnout(turnout, tpMinus);
+	else if (turnout->position == tpMinus)
+		switch_turnout(turnout, tpPlus);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

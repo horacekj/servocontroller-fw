@@ -2,6 +2,7 @@
 #define _TURNOUT_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum {
 	tpPlus = 0,
@@ -20,6 +21,8 @@ typedef struct {
 	int8_t debounce_val; // TODO: reset on init
 	int16_t angle;
 	uint16_t width;
+	uint8_t btn_debounce_val;
+	bool btn_pressed;
 	// TODO: data for turning-off signal to servo after some time
 } Turnout;
 

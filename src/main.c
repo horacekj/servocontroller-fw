@@ -13,6 +13,7 @@
 #include "turnout.h"
 #include "switch.h"
 #include "inputs.h"
+#include "simple_queue.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +32,8 @@ Turnout turnouts[TURNOUTS_COUNT] = {
 	},
 };
 
+SimpleQueue command_queue;
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main();
@@ -40,6 +43,7 @@ void eeprom_load_all_pos();
 void eeprom_store_pos(Turnout*);
 
 void leds_update_20ms(Turnout*);
+void queue_poll();
 
 // TODO: servo angle update on potentiometer value changed (and possibly change servo position)
 
@@ -49,6 +53,7 @@ int main() {
 	init();
 
 	while (true) {
+		queue_poll();
 		// wdt_reset();
 	}
 }
@@ -70,6 +75,10 @@ static inline void init() {
 	OCR0A = 127;
 
 	pwm_servo_init();
+	sq_init(&command_queue);
+
+	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++)
+		turnouts[i].index = i;
 
 	sei(); // enable interrupts globally
 }
@@ -103,6 +112,19 @@ void eeprom_store_pos(Turnout* turnout) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void btn_pressed(Turnout* turnout) {
+	if (!sq_full(&command_queue) && !sq_contains(&command_queue, turnout->index)
+			&& switching_turnout() != turnout)
+		sq_enqueue(&command_queue, turnout->index);
+}
+
+void queue_poll() {
+	if (sq_empty(&command_queue))
+		return;
+	if (pwm_servo_generating())
+		return;
+
+	uint8_t turnout_index = sq_dequeue(&command_queue);
+	Turnout* turnout = &turnouts[turnout_index];
 	if (turnout->position == tpPlus)
 		switch_turnout(turnout, tpMinus);
 	else if (turnout->position == tpMinus)

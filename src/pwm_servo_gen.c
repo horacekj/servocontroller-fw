@@ -45,7 +45,7 @@ bool pwm_servo_generating() {
 	return _pin > -1;
 }
 
-uint8_t pwm_servo_pin() {
+int8_t pwm_servo_pin() {
 	return _pin;
 }
 

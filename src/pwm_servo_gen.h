@@ -10,6 +10,6 @@ void pwm_servo_init();
 void pwm_servo_gen(uint8_t pin, int16_t angle);
 void pwm_servo_stop();
 bool pwm_servo_generating();
-uint8_t pwm_servo_pin();
+int8_t pwm_servo_pin();
 
 #endif

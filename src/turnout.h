@@ -17,6 +17,7 @@ typedef struct {
 	uint8_t pin_servo;
 	uint8_t pin_button;
 
+	uint8_t index;
 	TurnoutPos position; // TODO: reset on init
 	int8_t debounce_val; // TODO: reset on init
 	int16_t angle;

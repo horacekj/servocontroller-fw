@@ -1,6 +1,8 @@
 #ifndef _SWITCH_H_
 #define _SWITCH_H_
 
+/* Slowly switching turnouts = changing position slowly */
+
 #include <stdbool.h>
 #include "turnout.h"
 

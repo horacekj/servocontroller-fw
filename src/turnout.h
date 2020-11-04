@@ -1,6 +1,8 @@
 #ifndef _TURNOUT_H_
 #define _TURNOUT_H_
 
+/* Definition of turnout structure */
+
 #include <stdint.h>
 #include <stdbool.h>
 

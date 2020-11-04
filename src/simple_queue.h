@@ -1,6 +1,8 @@
 #ifndef _SIMPLE_QUEUE_H_
 #define _SIMPLE_QUEUE_H_
 
+/* Simple queue. */
+
 #include <stdint.h>
 #include <stdbool.h>
 

@@ -1,6 +1,8 @@
 #ifndef _IO_H_
 #define _IO_H_
 
+/* General digital IO functions, simillar to Arduino. */
+
 #include <stdbool.h>
 #include <stdint.h>
 

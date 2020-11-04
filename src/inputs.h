@@ -1,6 +1,11 @@
 #ifndef _INPUTS_H_
 #define _INPUTS_H_
 
+/* Inputs processing:
+   * pin debouncing
+   * potentiometers reading
+ */
+
 #include "turnout.h"
 #include "io.h"
 

@@ -1,6 +1,8 @@
 #ifndef _PWM_SERVO_GEN_
 #define _RWM_SERVO_GEN_
 
+/* Low-level software PWM generation */
+
 #include <stdbool.h>
 #include <stdint.h>
 

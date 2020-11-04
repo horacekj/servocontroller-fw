@@ -52,14 +52,14 @@ int main() {
 			adc_counter = 0;
 		}
 
-		// wdt_reset();
+		wdt_reset();
 	}
 }
 
 static inline void init() {
 	ACSR |= ACD;  // analog comparator disable
-	// WDTCR |= 1 << WDE;  // watchdog enable
-	// WDTCR |= WDP2; // ~250 ms timeout
+	WDTCSR |= 1 << WDE;  // watchdog enable
+	WDTCSR |= WDP2; // ~250 ms timeout
 
 	// Setup timer 0
 	TCCR0A |= 1 << WGM01; // CTC mode

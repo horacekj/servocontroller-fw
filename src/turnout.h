@@ -26,6 +26,4 @@ typedef struct {
 	bool btn_pressed;
 } Turnout;
 
-#define TURNOUTS_COUNT 1
-
 #endif

@@ -15,20 +15,12 @@
 #include "switch.h"
 #include "inputs.h"
 #include "simple_queue.h"
+#include "turnouts.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
 #define EEPROM_POS_START 0
 #define EEPROM_ANGLE_START 32
-
-Turnout turnouts[TURNOUTS_COUNT] = {
-	{ // servo 1 [0]
-		.pin_pot = IO_PINC2,
-		.pin_led = IO_PINB1,
-		.pin_servo = IO_PIND6,
-		.pin_button = IO_PIND1,
-	},
-};
 
 SimpleQueue command_queue;
 

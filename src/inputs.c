@@ -4,6 +4,7 @@
 #include "io.h"
 #include "switch.h"
 #include "pwm_servo_gen.h"
+#include "turnouts.h"
 
 void button_update_1ms(Turnout* turnout) {
 	if (!get_input(turnout->pin_button)) {

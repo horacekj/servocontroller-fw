@@ -46,7 +46,7 @@ MCU = atmega328p
 
 # Processor fuses. TODO
 #     Define fuses for processor, flash by calling 'make fuses'
-FUSES = -U lfuse:w:0xFE:m -U hfuse:w:0xD9:m -U efuse:w:0xFD:m -U lock:w:0xFF:m
+FUSES = -U lfuse:w:0xFE:m -U hfuse:w:0xD9:m -U efuse:w:0xFC:m -U lock:w:0xFF:m
 # change hfuse to 0x5D to disable reset pin
 # 8 MHz internal oscilator
 

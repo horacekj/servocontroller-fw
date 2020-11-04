@@ -31,24 +31,24 @@ bool get_input(uint8_t pin) {
 	return false;
 }
 
-void set_dir_in(uint8_t pin) {
-	set_output(pin, false); // disable pull-up
+void pin_mode(uint8_t pin, uint8_t mode) {
+	if (mode == OUTPUT) {
+		if (pin >= IO_PINB0 && pin <= IO_PINB7) {
+			DDRB |= (1 << (pin-IO_PINB0));
+		} else if (pin >= IO_PINC0 && pin <= IO_PINC7) {
+			DDRC |= (1 << (pin-IO_PINC0));
+		} else if (pin >= IO_PIND0 && pin <= IO_PIND7) {
+			DDRD |= (1 << (pin-IO_PIND0));
+		}
+	} else {
+		set_output(pin, mode == INPUT_PULLUP);
 
-	if (pin >= IO_PINB0 && pin <= IO_PINB7) {
-		DDRB &= ~(1 << (pin-IO_PINB0));
-	} else if (pin >= IO_PINC0 && pin <= IO_PINC7) {
-		DDRC &= ~(1 << (pin-IO_PINC0));
-	} else if (pin >= IO_PIND0 && pin <= IO_PIND7) {
-		DDRD &= ~(1 << (pin-IO_PIND0));
-	}
-}
-
-void set_dir_out(uint8_t pin) {
-	if (pin >= IO_PINB0 && pin <= IO_PINB7) {
-		DDRB |= (1 << (pin-IO_PINB0));
-	} else if (pin >= IO_PINC0 && pin <= IO_PINC7) {
-		DDRC |= (1 << (pin-IO_PINC0));
-	} else if (pin >= IO_PIND0 && pin <= IO_PIND7) {
-		DDRD |= (1 << (pin-IO_PIND0));
+		if (pin >= IO_PINB0 && pin <= IO_PINB7) {
+			DDRB &= ~(1 << (pin-IO_PINB0));
+		} else if (pin >= IO_PINC0 && pin <= IO_PINC7) {
+			DDRC &= ~(1 << (pin-IO_PINC0));
+		} else if (pin >= IO_PIND0 && pin <= IO_PIND7) {
+			DDRD &= ~(1 << (pin-IO_PIND0));
+		}
 	}
 }

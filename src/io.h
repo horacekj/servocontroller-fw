@@ -4,6 +4,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define OUTPUT 0
+#define INPUT 1
+#define INPUT_PULLUP 2
+
 #define IO_PINB0 0
 #define IO_PINB1 1
 #define IO_PINB2 2
@@ -33,8 +37,6 @@
 
 void set_output(uint8_t pin, bool state);
 bool get_input(uint8_t pin);
-void set_dir_in(uint8_t pin);
-void set_dir_out(uint8_t pin);
-
+void pin_mode(uint8_t pin, uint8_t mode);
 
 #endif

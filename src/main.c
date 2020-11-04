@@ -175,20 +175,20 @@ void leds_update_20ms(Turnout* turnout) {
 	#define BLINK_TIMEOUT 15
 
 	if (turnout->position == tpPlus) {
-		set_dir_out(turnout->pin_led);
+		pin_mode(turnout->pin_led, OUTPUT);
 		set_output(turnout->pin_led, true);
 		blink = 0;
 	} else if (turnout->position == tpMinus) {
-		set_dir_out(turnout->pin_led);
+		pin_mode(turnout->pin_led, OUTPUT);
 		set_output(turnout->pin_led, false);
 		blink = 0;
 	} else {
 		blink++;
 		if (blink < BLINK_TIMEOUT) {
-			set_dir_out(turnout->pin_led);
+			pin_mode(turnout->pin_led, OUTPUT);
 			set_output(turnout->pin_led, (turnout->position == tpMovingToPlus));
 		} else if (blink < BLINK_TIMEOUT*2) {
-			set_dir_in(turnout->pin_led);
+			pin_mode(turnout->pin_led, INPUT);
 		} else
 			blink = 0;
 	}

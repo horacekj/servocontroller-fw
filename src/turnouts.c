@@ -2,7 +2,7 @@
 #include "io.h"
 
 Turnout turnouts[TURNOUTS_COUNT] = {
-	{ // servo 1 [0]
+	{ // servo 3 [0]
 		.pin_pot = IO_PINC2,
 		.pin_led = IO_PINB1,
 		.pin_servo = IO_PIND6,

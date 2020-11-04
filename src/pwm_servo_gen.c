@@ -56,8 +56,10 @@ ISR(TIMER1_COMPA_vect) {
 		set_output(_pin, false);
 		_pin = _pin_buf;
 		_angle = _angle_buf;
-		if (_pin < 0)
+		if (_pin < 0) {
 			TIMSK1 &= ~(1 << OCIE1A); // disable timer
+			return;
+		}
 		OCR1A = OCR_SERVO_MIDDLE + _angle;
 	} else { // go high
 		OCR1A = OCR_SERVO_PERIOD - OCR_SERVO_MIDDLE - _angle;
@@ -65,4 +67,6 @@ ISR(TIMER1_COMPA_vect) {
 
 	_signal_high = !_signal_high;
 	set_output(_pin, _signal_high);
+	TCNT1H = 0;
+	TCNT1L = 0;
 }

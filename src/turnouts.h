@@ -3,7 +3,7 @@
 
 #include "turnout.h"
 
-#define TURNOUTS_COUNT 1
+#define TURNOUTS_COUNT 4
 
 extern Turnout turnouts[TURNOUTS_COUNT];
 

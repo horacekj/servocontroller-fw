@@ -80,6 +80,7 @@ static inline void init() {
 		turnouts[i].index = i;
 		turnouts[i].btn_debounce_val = 0;
 		turnouts[i].btn_pressed = false;
+		turnouts[i].blink = 0;
 	}
 
 	sei(); // enable interrupts globally
@@ -171,26 +172,25 @@ void switch_done(Turnout* turnout) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void leds_update_20ms(Turnout* turnout) {
-	static volatile uint8_t blink = 0;
 	#define BLINK_TIMEOUT 15
 
 	if (turnout->position == tpPlus) {
 		pin_mode(turnout->pin_led, OUTPUT);
 		set_output(turnout->pin_led, true);
-		blink = 0;
+		turnout->blink = 0;
 	} else if (turnout->position == tpMinus) {
 		pin_mode(turnout->pin_led, OUTPUT);
 		set_output(turnout->pin_led, false);
-		blink = 0;
+		turnout->blink = 0;
 	} else {
-		blink++;
-		if (blink < BLINK_TIMEOUT) {
+		turnout->blink++;
+		if (turnout->blink < BLINK_TIMEOUT) {
 			pin_mode(turnout->pin_led, OUTPUT);
 			set_output(turnout->pin_led, (turnout->position == tpMovingToPlus));
-		} else if (blink < BLINK_TIMEOUT*2) {
+		} else if (turnout->blink < BLINK_TIMEOUT*2) {
 			pin_mode(turnout->pin_led, INPUT);
 		} else
-			blink = 0;
+			turnout->blink = 0;
 	}
 }
 

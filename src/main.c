@@ -61,11 +61,6 @@ static inline void init() {
 	// WDTCR |= 1 << WDE;  // watchdog enable
 	// WDTCR |= WDP2; // ~250 ms timeout
 
-	DDRD |= (1 << PD5) | (1 << PD6) | (1 << PD7);
-	DDRB |= (1 << PB0);
-
-	PORTD |= (1 << PD1) | (1 << PD2) | (1 << PD3) | (1 << PD4);
-
 	// Setup timer 0
 	TCCR0A |= 1 << WGM01; // CTC mode
 	TCCR0B |= (1 << CS01) | (1 << CS00); // 64× prescaler
@@ -77,6 +72,11 @@ static inline void init() {
 	adc_init();
 
 	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++) {
+		pin_mode(turnouts[i].pin_pot, INPUT);
+		pin_mode(turnouts[i].pin_led, OUTPUT);
+		pin_mode(turnouts[i].pin_servo, OUTPUT);
+		pin_mode(turnouts[i].pin_button, INPUT_PULLUP);
+
 		turnouts[i].index = i;
 		turnouts[i].btn_debounce_val = 0;
 		turnouts[i].btn_pressed = false;

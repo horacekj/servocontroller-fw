@@ -174,11 +174,13 @@ void switch_done(Turnout* turnout) {
 void leds_update_20ms(Turnout* turnout) {
 	#define BLINK_TIMEOUT 15
 
-	if (turnout->position == tpPlus) {
+	bool in_sq = sq_contains(&command_queue, turnout->index);
+
+	if (turnout->position == tpPlus && !in_sq) {
 		pin_mode(turnout->pin_led, OUTPUT);
 		set_output(turnout->pin_led, true);
 		turnout->blink = 0;
-	} else if (turnout->position == tpMinus) {
+	} else if (turnout->position == tpMinus && !in_sq) {
 		pin_mode(turnout->pin_led, OUTPUT);
 		set_output(turnout->pin_led, false);
 		turnout->blink = 0;
@@ -186,7 +188,8 @@ void leds_update_20ms(Turnout* turnout) {
 		turnout->blink++;
 		if (turnout->blink < BLINK_TIMEOUT) {
 			pin_mode(turnout->pin_led, OUTPUT);
-			set_output(turnout->pin_led, (turnout->position == tpMovingToPlus));
+			set_output(turnout->pin_led, (turnout->position == tpMovingToPlus ||
+			                              turnout->position == tpPlus));
 		} else if (turnout->blink < BLINK_TIMEOUT*2) {
 			pin_mode(turnout->pin_led, INPUT);
 		} else

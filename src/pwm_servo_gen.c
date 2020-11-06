@@ -39,6 +39,10 @@ void pwm_servo_gen(uint8_t pin, int16_t angle) {
 
 void pwm_servo_stop() {
 	_pin_buf = -1;
+	if (!_signal_high) {
+		TIMSK1 &= ~(1 << OCIE1A); // disable timer
+		_pin = -1;
+	}
 }
 
 bool pwm_servo_generating() {

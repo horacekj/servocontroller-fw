@@ -27,6 +27,7 @@ typedef struct {
 	uint8_t btn_debounce_val;
 	bool btn_pressed;
 	uint8_t blink;
+	bool save_pos;
 } Turnout;
 
 #endif

@@ -52,6 +52,13 @@ int main() {
 			adc_counter = 0;
 		}
 
+		for (uint8_t i = 0; i < TURNOUTS_COUNT; i++) {
+			if (turnouts[i].save_pos) {
+				eeprom_store_pos(&turnouts[i]);
+				turnouts[i].save_pos = false;
+			}
+		}
+
 		wdt_reset();
 	}
 }
@@ -81,6 +88,7 @@ static inline void init() {
 		turnouts[i].btn_debounce_val = 0;
 		turnouts[i].btn_pressed = false;
 		turnouts[i].blink = 0;
+		turnouts[i].save_pos = false;
 	}
 
 	sei(); // enable interrupts globally
@@ -166,7 +174,7 @@ void queue_poll() {
 }
 
 void switch_done(Turnout* turnout) {
-	eeprom_store_pos(turnout);
+	turnout->save_pos = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

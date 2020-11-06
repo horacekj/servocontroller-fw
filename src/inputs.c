@@ -89,6 +89,8 @@ ISR(ADC_vect) {
 	} else if (_adc_reading >= ADC_READING_TURNOUT0 && _adc_reading < TURNOUTS_COUNT) {
 		if (value > 1000)
 			value = 1000;
+		if (value < 10)
+			value = 10;
 		turnouts[_adc_reading].width = 2*value;
 		_adc_reading++;
 		if (_adc_reading >= TURNOUTS_COUNT) {

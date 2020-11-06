@@ -8,8 +8,8 @@ volatile TurnoutPos _target_pos;
 volatile uint8_t end_remain_counter;
 volatile uint8_t begin_remain_counter;
 
-#define BEGIN_REMAIN 6 // send 100 ms stable signal at end of switching
-#define END_REMAIN 25 // send 500 ms stable signal at end of switching
+#define BEGIN_REMAIN 5 // send 100 ms stable signal at end of switching
+#define END_REMAIN 10 // send 200 ms stable signal at end of switching
 
 void switch_turnout(Turnout* turnout, TurnoutPos pos) {
 	_switching = turnout;

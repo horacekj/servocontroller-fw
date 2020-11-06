@@ -64,7 +64,7 @@ static inline void init() {
 	// Setup timer 0
 	TCCR0A |= 1 << WGM01; // CTC mode
 	TCCR0B |= (1 << CS01) | (1 << CS00); // 64× prescaler
-	OCR0A = 127;
+	OCR0A = 255;
 
 	eeprom_load_all_pos();
 	pwm_servo_init();
@@ -172,7 +172,7 @@ void switch_done(Turnout* turnout) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void leds_update_20ms(Turnout* turnout) {
-	#define BLINK_TIMEOUT 15
+	#define BLINK_TIMEOUT 7
 
 	bool in_sq = sq_contains(&command_queue, turnout->index);
 

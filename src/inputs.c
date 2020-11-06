@@ -81,7 +81,7 @@ ISR(ADC_vect) {
 	if (_adc_reading == ADC_READING_NO)
 		return;
 	else if (_adc_reading == ADC_READING_SPEED) {
-		switch_move_per_tick = value >> 4;
+		switch_move_per_tick = value >> 3;
 		if (switch_move_per_tick < 3)
 			switch_move_per_tick = 3;
 		_adc_reading++;

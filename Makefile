@@ -107,14 +107,14 @@ OPT = s
 #     Native formats for AVR-GCC's -g are dwarf-2 [default] or stabs.
 #     AVR Studio 4.10 requires dwarf-2.
 #     AVR [Extended] COFF format requires stabs, plus an avr-objcopy run.
-DEBUG = dwarf-2
+DEBUG =
 
 
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-EXTRAINCDIRS = 
+EXTRAINCDIRS =
 
 
 # Compiler flag to set the C Standard level.
@@ -147,21 +147,11 @@ CPPDEFS = -DF_CPU=$(F_CPU)UL
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #    -adhlns...: create assembler listing
-CFLAGS = -g$(DEBUG)
+# CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS)
 CFLAGS += -O$(OPT)
-CFLAGS += -funsigned-char
-CFLAGS += -funsigned-bitfields
-CFLAGS += -fpack-struct
-CFLAGS += -fshort-enums
-CFLAGS += -Wall
-#CFLAGS += -Wstrict-prototypes
-CFLAGS += -pedantic
-#CFLAGS += -mshort-calls
-#CFLAGS += -fno-unit-at-a-time
-CFLAGS += -Wundef
-CFLAGS += -Wunreachable-code
-CFLAGS += -Wsign-compare
+CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS += -Wall -pedantic
 CFLAGS += -Wa,-adhlns=$(<:%.c=$(OBJDIR)/%.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += -std=$(CSTANDARD)
@@ -177,21 +167,11 @@ CFLAGS += -std=$(CSTANDARD)
 CPPFLAGS = -g$(DEBUG)
 CPPFLAGS += $(CPPDEFS)
 CPPFLAGS += -O$(OPT)
-CPPFLAGS += -funsigned-char
-CPPFLAGS += -funsigned-bitfields
-CPPFLAGS += -fpack-struct
-CPPFLAGS += -fshort-enums
-CPPFLAGS += -fno-exceptions
+CPPFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -fno-exceptions
 CPPFLAGS += -Wall
-CFLAGS += -Wundef
-#CPPFLAGS += -mshort-calls
-#CPPFLAGS += -fno-unit-at-a-time
-#CPPFLAGS += -Wstrict-prototypes
-CPPFLAGS += -Wunreachable-code
-CPPFLAGS += -Wsign-compare
 CPPFLAGS += -Wa,-adhlns=$(<:%.cpp=$(OBJDIR)/%.lst)
 CPPFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
-#CPPFLAGS += -std=$(CPPSTANDARD)
+CPPFLAGS += -std=$(CPPSTANDARD)
 
 
 #---------------- Assembler Options ----------------
@@ -207,30 +187,6 @@ ASFLAGS = $(ADEFS) -Wa,-adhlns=$(<:%.S=$(OBJDIR)/%.lst),-gstabs,--listing-cont-l
 
 
 #---------------- Library Options ----------------
-# Minimalistic printf version
-PRINTF_LIB_MIN = -Wl,-u,vfprintf -lprintf_min
-
-# Floating point printf version (requires MATH_LIB = -lm below)
-PRINTF_LIB_FLOAT = -Wl,-u,vfprintf -lprintf_flt
-
-# If this is left blank, then it will use the Standard printf version.
-PRINTF_LIB = 
-#PRINTF_LIB = $(PRINTF_LIB_MIN)
-#PRINTF_LIB = $(PRINTF_LIB_FLOAT)
-
-
-# Minimalistic scanf version
-SCANF_LIB_MIN = -Wl,-u,vfscanf -lscanf_min
-
-# Floating point + %[ scanf version (requires MATH_LIB = -lm below)
-SCANF_LIB_FLOAT = -Wl,-u,vfscanf -lscanf_flt
-
-# If this is left blank, then it will use the Standard scanf version.
-SCANF_LIB = 
-#SCANF_LIB = $(SCANF_LIB_MIN)
-#SCANF_LIB = $(SCANF_LIB_FLOAT)
-
-
 MATH_LIB = -lm
 
 
@@ -238,7 +194,7 @@ MATH_LIB = -lm
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-EXTRALIBDIRS = 
+EXTRALIBDIRS =
 
 
 
@@ -263,8 +219,8 @@ EXTMEMOPTS =
 LDFLAGS = -Wl,-Map=$(TARGET).map,--cref
 LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += $(patsubst %,-L%,$(EXTRALIBDIRS))
-LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
-#LDFLAGS += -T linker_script.x
+# LDFLAGS += $(MATH_LIB)
+# LDFLAGS += -T linker_script.x
 
 
 
@@ -307,40 +263,11 @@ AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 
-#---------------- Debugging Options ----------------
-
-# For simulavr only - target MCU frequency.
-DEBUG_MFREQ = $(F_CPU)
-
-# Set the DEBUG_UI to either gdb or insight.
-# DEBUG_UI = gdb
-DEBUG_UI = insight
-
-# Set the debugging back-end to either avarice, simulavr.
-DEBUG_BACKEND = avarice
-#DEBUG_BACKEND = simulavr
-
-# GDB Init Filename.
-GDBINIT_FILE = __avr_gdbinit
-
-# When using avarice settings for the JTAG
-JTAG_DEV = /dev/com1
-
-# Debugging port used to communicate between GDB / avarice / simulavr.
-DEBUG_PORT = 4242
-
-# Debugging host used to communicate between GDB / avarice / simulavr, normally
-#     just set to localhost unless doing some sort of crazy debugging when 
-#     avarice is running on a different computer.
-DEBUG_HOST = localhost
-
-
 
 #============================================================================
 
 
 # Define programs and commands.
-SHELL = sh
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
@@ -350,8 +277,6 @@ NM = avr-nm
 AVRDUDE = avrdude
 REMOVE = rm -f
 REMOVEDIR = rm -rf
-COPY = cp
-WINSHELL = cmd
 
 
 # Define Messages
@@ -359,8 +284,6 @@ WINSHELL = cmd
 MSG_ERRORS_NONE = Errors: none
 MSG_BEGIN = -------- begin --------
 MSG_END = --------  end  --------
-MSG_SIZE_BEFORE = Size before: 
-MSG_SIZE_AFTER = Size after:
 MSG_FLASH = Creating load file for Flash:
 MSG_EEPROM = Creating load file for EEPROM:
 MSG_EXTENDED_LISTING = Creating Extended Listing:
@@ -369,7 +292,6 @@ MSG_LINKING = Linking:
 MSG_COMPILING = Compiling C:
 MSG_COMPILING_CPP = Compiling C++:
 MSG_ASSEMBLING = Assembling:
-MSG_CLEANING = Cleaning project:
 MSG_CREATING_LIBRARY = Creating library:
 
 
@@ -397,11 +319,11 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: begin gccversion build sizeafter end
+all: build size
 
 # Change the build target to build a HEX file or a library.
-build: elf hex eep lss sym
-#build: lib
+build: elf hex
+#build: eep lib lss sym
 
 
 elf: $(TARGET).elf
@@ -414,28 +336,12 @@ lib: $(LIBNAME)
 
 
 
-# Eye candy.
-# AVR Studio 3.x does not check make's exit code but relies on
-# the following magic strings to be generated by the compile job.
-begin:
-	@echo $(MSG_BEGIN)
-
-end:
-	@echo $(MSG_END)
-
-
 # Display size of file.
 HEXSIZE = $(SIZE) --target=$(FORMAT) $(TARGET).hex
 ELFSIZE = $(SIZE) --mcu=$(MCU) --format=avr $(TARGET).elf
 
-sizebefore:
-	@if test -f $(TARGET).elf; then echo; echo $(MSG_SIZE_BEFORE); $(ELFSIZE); \
-	2>/dev/null; echo; fi
-
-sizeafter:
-	@if test -f $(TARGET).elf; then echo; echo $(MSG_SIZE_AFTER); $(ELFSIZE); \
-	2>/dev/null; echo; fi
-
+size:
+	@if test -f $(TARGET).elf; then echo; $(ELFSIZE) 2>/dev/null; echo; fi
 
 
 # Display compiler version information.
@@ -445,41 +351,12 @@ gccversion :
 
 
 # Program the device.
-program: $(TARGET).hex $(TARGET).eep
+program: $(TARGET).hex # $(TARGET).eep
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH)
 	# $(AVRDUDE_WRITE_EEPROM) do not write eeprom
 
 fuses:
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(FUSES)
-
-# Generate avr-gdb config/init file which does the following:
-#     define the reset signal, load the target file, connect to target, and set 
-#     a breakpoint at main().
-gdb-config:
-	@$(REMOVE) $(GDBINIT_FILE)
-	@echo define reset >> $(GDBINIT_FILE)
-	@echo SIGNAL SIGHUP >> $(GDBINIT_FILE)
-	@echo end >> $(GDBINIT_FILE)
-	@echo file $(TARGET).elf >> $(GDBINIT_FILE)
-	@echo target remote $(DEBUG_HOST):$(DEBUG_PORT)  >> $(GDBINIT_FILE)
-ifeq ($(DEBUG_BACKEND),simulavr)
-	@echo load  >> $(GDBINIT_FILE)
-endif
-	@echo break main >> $(GDBINIT_FILE)
-
-debug: gdb-config $(TARGET).elf
-ifeq ($(DEBUG_BACKEND), avarice)
-	@echo Starting AVaRICE - Press enter when "waiting to connect" message displays.
-	@$(WINSHELL) /c start avarice --jtag $(JTAG_DEV) --erase --program --file \
-	$(TARGET).elf $(DEBUG_HOST):$(DEBUG_PORT)
-	@$(WINSHELL) /c pause
-
-else
-	@$(WINSHELL) /c start simulavr --gdbserver --device $(MCU) --clock-freq \
-	$(DEBUG_MFREQ) --port $(DEBUG_PORT)
-endif
-	@$(WINSHELL) /c start avr-$(DEBUG_UI) --command=$(GDBINIT_FILE)
-
 
 # Create final output files (.hex, .eep) from ELF output file.
 %.hex: %.elf
@@ -565,7 +442,6 @@ $(OBJDIR)/%.o : %.S
 clean: begin clean_list end
 
 clean_list :
-	@echo $(MSG_CLEANING)
 	$(REMOVE) $(TARGET).hex
 	$(REMOVE) $(TARGET).eep
 	$(REMOVE) $(TARGET).cof
@@ -575,9 +451,6 @@ clean_list :
 	$(REMOVE) $(TARGET).lss
 	$(REMOVE) $(SRC:%.c=$(OBJDIR)/%.o)
 	$(REMOVE) $(SRC:%.c=$(OBJDIR)/%.lst)
-	$(REMOVE) $(SRC:.c=.s)
-	$(REMOVE) $(SRC:.c=.d)
-	$(REMOVE) $(SRC:.c=.i)
 	$(REMOVEDIR) .dep
 
 
@@ -591,5 +464,5 @@ $(shell mkdir -p $(dir $(TARGET)) 2>/dev/null)
 
 
 # Listing of phony targets.
-.PHONY : all begin finish end sizebefore sizeafter gccversion \
+.PHONY : all begin finish end size gccversion \
 build elf hex eep lss sym clean clean_list program debug gdb-config fuses

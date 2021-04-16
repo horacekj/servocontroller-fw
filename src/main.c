@@ -65,8 +65,7 @@ int main() {
 
 static inline void init() {
 	ACSR |= ACD;  // analog comparator disable
-	WDTCSR |= 1 << WDE;  // watchdog enable
-	WDTCSR |= WDP2; // ~250 ms timeout
+	wdt_enable(WDTO_250MS);
 
 	// Setup timer 0
 	TCCR0A |= 1 << WGM01; // CTC mode

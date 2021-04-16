@@ -138,7 +138,7 @@ void eeprom_load_all_pos() {
 		else if (turnouts[i].position > 3)
 			turnouts[i].position = tpPlus;
 
-		turnouts[i].angle = eeprom_read_word((uint16_t*)(EEPROM_ANGLE_START+i));
+		turnouts[i].angle = eeprom_read_word((uint16_t*)(EEPROM_ANGLE_START+(2*i)));
 		if ((uint16_t)turnouts[i].angle == 0xFFFF)
 			turnouts[i].angle = 0;
 		else if (turnouts[i].angle < PWM_ANGLE_MIN)
@@ -156,7 +156,7 @@ void eeprom_store_pos(Turnout* turnout) {
 		pos = tpMinus;
 
 	eeprom_write_byte((uint8_t*)(EEPROM_POS_START + turnout->index), pos);
-	eeprom_write_word((uint16_t*)(EEPROM_ANGLE_START + turnout->index), turnout->angle);
+	eeprom_write_word((uint16_t*)(EEPROM_ANGLE_START + (2*turnout->index)), turnout->angle);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

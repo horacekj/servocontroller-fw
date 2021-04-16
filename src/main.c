@@ -96,6 +96,15 @@ static inline void init() {
 	while (adc_reading());
 
 	TIMSK0 |= 1 << OCIE0A; // timer 0 enable compare match A
+
+	// Send a few initial position pulses to servo
+	for (uint8_t i = 0; i < TURNOUTS_COUNT; i++) {
+		pwm_servo_gen(turnouts[i].pin_servo, turnouts[i].angle);
+		_delay_ms(100);
+		wdt_reset();
+		pwm_servo_stop();
+		while (pwm_servo_generating());
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
